@@ -38,6 +38,12 @@ int SIZE = 5000;
 unsigned char pool[5000];
 void loadData()
 {
+  for (int i = 0; i < SIZE; i++)
+  {
+    pool[i] = 0xff;
+  }
+
+
   String buf = loadPage();
   for (int i = 0; i < SIZE; i++)
   {
@@ -46,12 +52,6 @@ void loadData()
     pool[i] = bbb;
   }
 
-  for (int i = 0; i < SIZE; i++)
-  {
-    pool[i] = 0xff;
-  }
-
-  loadPool(pool);
   delay(3000);
   M5.M5Ink.drawBuff((uint8_t *)pool);
 }
