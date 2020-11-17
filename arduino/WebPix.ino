@@ -17,7 +17,6 @@ const char *endpoint = "https://coreink-web.terrierscript.vercel.app/api/dog/pix
 
 String loadPage()
 {
-  // DynamicJsonDocument doc(500);
   HTTPClient http;
   http.begin(endpoint);
   int httpCode = http.GET();
@@ -25,7 +24,6 @@ String loadPage()
   String result = "";
   if (httpCode > 0)
   {
-    //jsonオブジェクトの作成
     result = http.getString();
   }
   else
@@ -37,7 +35,7 @@ String loadPage()
 }
 
 int SIZE = 5000;
-unsigned char pool[5000]; //ここが一定値以上だと壊れる。
+unsigned char pool[5000];
 void loadPool(unsigned char *pool)
 {
   String buf = loadPage();
@@ -46,7 +44,6 @@ void loadPool(unsigned char *pool)
     String pp = buf.substring(i * 2, i * 2 + 2);
     int bbb = (int)strtol(pp.c_str(), 0, 16);
     pool[i] = bbb;
-    // Serial.printf("%d|", bbb);
   }
 }
 
