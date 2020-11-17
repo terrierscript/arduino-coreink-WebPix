@@ -36,7 +36,7 @@ String loadPage()
 
 int SIZE = 5000;
 unsigned char pool[5000];
-void loadPool(unsigned char *pool)
+void loadData()
 {
   String buf = loadPage();
   for (int i = 0; i < SIZE; i++)
@@ -45,11 +45,7 @@ void loadPool(unsigned char *pool)
     int bbb = (int)strtol(pp.c_str(), 0, 16);
     pool[i] = bbb;
   }
-}
 
-void loadData()
-{
-  Serial.printf("loadData\n");
   for (int i = 0; i < SIZE; i++)
   {
     pool[i] = 0xff;
