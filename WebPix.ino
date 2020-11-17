@@ -1,16 +1,6 @@
 #include "M5CoreInk.h"
-// #include "ModWifi.h"
-// #include "ModVoltage.h"
 #include <HTTPClient.h>
-// #include <ArduinoHttpClient.h>
 #include "ArduinoJson.h"
-// #include <ArduinoBearSSL.h>
-
-// #include <WiFiClientSecure.h>
-Ink_Sprite InkPageSprite(&M5.M5Ink);
-ModWifi Mod_Wifi;
-ModVoltage Mod_Voltage;
-
 
 void connectWifi (){
   char *ssid = "*******";
@@ -21,50 +11,7 @@ void connectWifi (){
     Serial.print('.');
     delay(500);
   }
-  return 0;
 }
-
-void drawWarning(const char *str)
-{
-  M5.M5Ink.clear(1);
-  InkPageSprite.clear(1);
-  InkPageSprite.drawString(10, 10, str);
-  InkPageSprite.pushSprite();
-}
-
-float getBatVoltage()
-{
-  analogSetPinAttenuation(35, ADC_11db);
-  esp_adc_cal_characteristics_t *adc_chars = (esp_adc_cal_characteristics_t *)calloc(1, sizeof(esp_adc_cal_characteristics_t));
-  esp_adc_cal_characterize(ADC_UNIT_1, ADC_ATTEN_DB_11, ADC_WIDTH_BIT_12, 3600, adc_chars);
-  uint16_t ADCValue = analogRead(35);
-
-  uint32_t BatVolmV = esp_adc_cal_raw_to_voltage(ADCValue, adc_chars);
-  float BatVol = float(BatVolmV) * 25.1 / 5.1 / 1000;
-  return BatVol;
-}
-
-void checkBatteryVoltage(bool powerDownFlag)
-{
-  float batVol = getBatVoltage();
-  Serial.printf("Bat Voltage %.2f\r\n", batVol);
-
-  if (batVol > 3.2)
-    return;
-
-  drawWarning("Battery voltage is low");
-  if (powerDownFlag == true)
-  {
-    M5.shutdown();
-  }
-  while (1)
-  {
-    batVol = getBatVoltage();
-    if (batVol > 3.2)
-      return;
-  }
-}
-
 
 const char *endpoint = "https://coreink-web.terrierscript.vercel.app/api/dog/pix";
 
@@ -119,27 +66,16 @@ void loadData()
 void setup()
 {
   M5.begin();
-
-  // M5.M5Ink.clear(1);
-
   if (!M5.M5Ink.isInit())
   {
     Serial.printf("Ink Init faild");
     while (1)
       delay(100);
   }
-  Serial.begin(115200);
-  Serial.setDebugOutput(true);
+  
   connectWifi();
   delay(1000);
-  if (InkPageSprite.creatSprite(0, 0, 200, 200, true) != 0)
-  {
-    Serial.printf("Ink Sprite creat faild");
-  }
-}
-
-void loop()
-{
+  
   Serial.printf("serial\n");
 
   if (M5.BtnMID.isPressed())
@@ -148,13 +84,14 @@ void loop()
     digitalWrite(LED_EXT_PIN, LOW);
     M5.M5Ink.clear();
     M5.shutdown();
-  }
-  
+  } else {
     loadData();
+    digitalWrite(LED_EXT_PIN, LOW);
+    M5.shutdown(300);
+  }
 
-  digitalWrite(LED_EXT_PIN, LOW);
-  M5.shutdown(300);
+}
 
-  delay(1000 * 20);
-  M5.update();
+void loop()
+{
 }
