@@ -13,7 +13,7 @@ void connectWifi (){
   }
 }
 
-const char *endpoint = "https://coreink-web.terrierscript.vercel.app/api/dog/pix";
+const char *endpoint = "https://*********/api/pix";
 
 String loadPage()
 {
